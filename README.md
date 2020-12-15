@@ -1,2 +1,2 @@
-# chebabiapi
+# boicote.app
 API Node + Express

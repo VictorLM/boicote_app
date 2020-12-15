@@ -1,0 +1,18 @@
+Boicote.App
+Consumir é um ato político.
+
+Categorias > ambiente, política, fake news, racismo, 
+App - Localização com lojas classificadas
+Marca principal > sub marcas e marcas do mesmo grupo
+
+Sistema de upvotes:
+Captcha
+Pegar dados client?
+Sem login, guardar e recuperar do storage
+
+Google Analytics
+
+boicoteapp@gmail.com
+Twitter: BoicoteApp
+Instagram: BoicoteApp
+Facebook: BoicoteApp

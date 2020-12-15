@@ -1,31 +1,63 @@
-const { boicotes } = require('../models');
+const { Op } = require('sequelize');
+const { Boicote, Autor, Link } = require('../models');
 
 class BoicotesController {
   //
   async index(req, res) {
-    const texts = await boicotes.findAll({
+    // TODO - MANDAR TODOS OS VOTOS DO VISITANTE
+    const boicotes = await Boicote.findAll({
+      include: [{
+        model: Autor,
+        as: 'autor',
+        attributes: ['nome'],
+      },
+      {
+        model: Link,
+        as: 'link',
+        attributes: ['link', 'confiavel'],
+      }],
+      where: {
+        confirmado: { [Op.ne]: null },
+        aprovado: { [Op.ne]: null },
+      },
       attributes: {
-        exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+        exclude: ['autorId', 'updatedAt', 'deletedAt'],
       },
       order: [['createdAt', 'DESC']],
     });
 
-    return res.json(texts);
+    return res.status(200).json(boicotes);
   }
 
   async store(req, res) {
+    // TODO - CATCH ERRORS
     try {
-      const text = await boicotes.create(req.body);
-
-      return res.json(text);
-    } catch (e) {
-      return res.status(400).json({
-        errors: e.errors.map((err) => err.message),
+      // MOSTRAR BOICOTES COM TÍTULOS SIMILARES - TODO - VER SE DA ERRO TITULO UNIQUE E PARANOID
+      // AUTOR
+      const autor = await Autor.create({
+        nome: req.body.nome,
+        email: req.body.email,
+        visitanteId: req.cookies.visitante,
       });
+      // BOICOTE
+      const boicote = await Boicote.create({
+        autorId: autor.id,
+        marca: req.body.marca,
+        titulo: req.body.titulo,
+        texto: req.body.texto,
+        tags: req.body.tags,
+      });
+      // LINKS
+      Object.values(req.body.links).forEach(async (link) => {
+        await Link.create({ link, boicoteId: boicote.id });
+      });
+      return res.json(boicote);
+    } catch (e) {
+      return res.status(400).json(e.errors);
     }
   }
 
-  async update(req, res) {
+  async delete(req, res) { // TODO - CONFIRMAR EXCLUSÃO POR E-MAIL
     try {
       const { id } = req.params;
 
@@ -35,42 +67,15 @@ class BoicotesController {
         });
       }
 
-      const text = await boicotes.findByPk(id);
+      const boicote = await Boicote.findByPk(id);
 
-      if (!text) {
-        return res.status(400).json({
-          errors: ['Escritório não existe'],
-        });
-      }
-
-      const updatedText = await text.update(req.body);
-      return res.json(updatedText);
-    } catch (e) {
-      return res.status(400).json({
-        errors: e.errors.map((err) => err.message),
-      });
-    }
-  }
-
-  async delete(req, res) {
-    try {
-      const { id } = req.params;
-
-      if (!id) {
-        return res.status(400).json({
-          errors: ['Informe o ID'],
-        });
-      }
-
-      const text = await boicotes.findByPk(id);
-
-      if (!text) {
+      if (!boicote) {
         return res.status(400).json({
           errors: ['Texto não existe'],
         });
       }
 
-      await text.destroy();
+      await boicote.destroy();
       return res.json({
         deleted: true,
       });
