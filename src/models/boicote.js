@@ -82,9 +82,12 @@ module.exports = (sequelize, DataTypes) => {
     });
     Boicote.hasMany(models.Link, {
       foreignKey: 'boicoteId',
-      as: 'link',
+      as: 'links',
     });
-    // links, votos, autores
+    Boicote.hasMany(models.Voto, {
+      foreignKey: 'boicoteId',
+      as: 'votos',
+    });
   };
 
   return Boicote;

@@ -1,32 +1,40 @@
-const { Op } = require('sequelize');
+const { Op, literal } = require('sequelize');
 const { Boicote, Autor, Link } = require('../models');
 
 class BoicotesController {
   //
   async index(req, res) {
     // TODO - MANDAR TODOS OS VOTOS DO VISITANTE
-    const boicotes = await Boicote.findAll({
-      include: [{
-        model: Autor,
-        as: 'autor',
-        attributes: ['nome'],
-      },
-      {
-        model: Link,
-        as: 'link',
-        attributes: ['link', 'confiavel'],
-      }],
-      where: {
-        confirmado: { [Op.ne]: null },
-        aprovado: { [Op.ne]: null },
-      },
-      attributes: {
-        exclude: ['autorId', 'updatedAt', 'deletedAt'],
-      },
-      order: [['createdAt', 'DESC']],
-    });
-
-    return res.status(200).json(boicotes);
+    try {
+      const boicotes = await Boicote.findAll({
+        where: {
+          // where: { id: '1d4888a0-1ae4-433a-b19d-009935e6df94' },
+          confirmado: { [Op.ne]: null },
+          aprovado: { [Op.ne]: null },
+        },
+        include: [{
+          model: Autor,
+          as: 'autor',
+          attributes: ['nome'],
+        },
+        {
+          model: Link,
+          as: 'links',
+          attributes: ['link', 'confiavel'],
+        }],
+        attributes: {
+          include: [
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true)'), 'cimaVotos'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false)'), 'baixoVotos'],
+          ],
+          exclude: ['autorId', 'updatedAt', 'deletedAt'],
+        },
+        order: [['createdAt', 'DESC']],
+      });
+      return res.status(200).json(boicotes);
+    } catch (e) {
+      return res.status(400).json(e.errors);
+    }
   }
 
   async store(req, res) {
