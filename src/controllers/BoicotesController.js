@@ -8,7 +8,6 @@ class BoicotesController {
     try {
       const boicotes = await Boicote.findAll({
         where: {
-          // where: { id: '1d4888a0-1ae4-433a-b19d-009935e6df94' },
           confirmado: { [Op.ne]: null },
           aprovado: { [Op.ne]: null },
         },

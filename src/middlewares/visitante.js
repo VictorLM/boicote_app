@@ -46,7 +46,7 @@ async function checkVisitanteMiddleware(req, res, next) {
     // NOVO VISITANTE
     const novoVisitanteId = await novoVisitante(req, res);
     //
-    res.cookie('visitante', novoVisitanteId, { maxAge: 1000000000000 });
+    res.cookie('visitante', novoVisitanteId, { maxAge: 1000000000000 }); // TODO - TRY CATCH
   }
 
   next();

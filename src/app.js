@@ -6,6 +6,7 @@ const { checkVisitanteMiddleware } = require('./middlewares/visitante.js');
 const corsOptions = require('./config/cors'); // TODO - FECHAR PARA DOMINIO APP
 // Routes
 const boicotesRoutes = require('./routes/boicotesRoutes');
+const votosRoutes = require('./routes/votosRoutes');
 
 class App {
   constructor() {
@@ -27,6 +28,8 @@ class App {
   routes() {
     // Boicotes
     this.app.use('/boicotes/', boicotesRoutes);
+    // Votos
+    this.app.use('/votos/', votosRoutes);
   }
 }
 
