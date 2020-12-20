@@ -20,28 +20,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+      validate: {
+        notNull: {
+          msg: 'Informe o tipo do Voto, por favor.',
+        },
+      },
     },
   }, {
     paranoid: true,
     tableName: 'votos',
   });
-  /*
-  Voto.votosCount = async function (boicoteId) { // eslint-disable-line
-    const cimaVotos = await Voto.count({
-      where: {
-        boicoteId,
-        cima: true,
-      },
-    });
-    const baixoVotos = await Voto.count({
-      where: {
-        boicoteId,
-        cima: false,
-      },
-    });
-    const votosCount = cimaVotos - baixoVotos;
-    return votosCount;
-  };
-  */
+
   return Voto;
 };

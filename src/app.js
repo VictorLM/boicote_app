@@ -7,6 +7,7 @@ const corsOptions = require('./config/cors'); // TODO - FECHAR PARA DOMINIO APP
 // Routes
 const boicotesRoutes = require('./routes/boicotesRoutes');
 const votosRoutes = require('./routes/votosRoutes');
+const comentariosRoutes = require('./routes/comentariosRoutes');
 
 class App {
   constructor() {
@@ -30,6 +31,8 @@ class App {
     this.app.use('/boicotes/', boicotesRoutes);
     // Votos
     this.app.use('/votos/', votosRoutes);
+    // Comentarios
+    this.app.use('/comentarios/', comentariosRoutes);
   }
 }
 

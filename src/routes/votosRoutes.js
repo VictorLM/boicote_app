@@ -4,6 +4,6 @@ const VotosController = require('../controllers/VotosController');
 const router = new Router();
 
 router.get('/', VotosController.index);
-router.post('/', VotosController.store);
+router.post('/:boicoteId', VotosController.store);
 
 module.exports = router;

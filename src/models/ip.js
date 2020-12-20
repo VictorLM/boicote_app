@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   IP.upsert = async function (ip) { // eslint-disable-line
+    // TODO - TRY CATCH
     const [ipCadastrado, created] = await IP.findOrCreate({ // eslint-disable-line
       where: { ip },
     });

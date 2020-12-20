@@ -21,7 +21,8 @@ class VotosController {
     // TODO - CATCH ERRORS
     // TODO - DEPLOY OPÇÕES DE DESVOTAR CIMA E BAIXOVOTOS
     try {
-      const { boicoteId, cima } = req.body;
+      const { boicoteId } = req.params;
+      const { cima } = req.body;
 
       if (!boicoteId || !('cima' in req.body)) {
         return res.status(400).json({

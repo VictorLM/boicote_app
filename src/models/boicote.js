@@ -80,13 +80,20 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'autorId',
       as: 'autor',
     });
+
     Boicote.hasMany(models.Link, {
       foreignKey: 'boicoteId',
       as: 'links',
     });
+
     Boicote.hasMany(models.Voto, {
       foreignKey: 'boicoteId',
       as: 'votos',
+    });
+
+    Boicote.hasMany(models.Comentario, {
+      foreignKey: 'boicoteId',
+      as: 'comentarios',
     });
   };
 

@@ -43,6 +43,23 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'visitanteId',
       as: 'visitante',
     });
+
+    Autor.hasMany(models.Comentario, {
+      foreignKey: 'autorId',
+      as: 'comentarios',
+    });
+  };
+
+  Autor.encontreOuCrie = async function (nome, email, visitanteId) { // eslint-disable-line
+    // TODO - TRY CATCH
+    const [autor, criado] = await Autor.findOrCreate({ // eslint-disable-line
+      where: {
+        nome,
+        email,
+        visitanteId,
+      },
+    });
+    return autor;
   };
 
   return Autor;
