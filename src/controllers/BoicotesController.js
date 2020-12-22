@@ -7,8 +7,12 @@ class BoicotesController {
   //
   async index(req, res) {
     // TODO - MANDAR TODOS OS VOTOS DO VISITANTE
+    // TODO - PAGINATE
+    // TODO - SORTBY VOTOS?
     try {
       const boicotes = await Boicote.findAll({
+        // limit: 2, PAGINATE
+        // offset: 1, PAGINATE
         where: {
           confirmado: { [Op.ne]: null },
           aprovado: { [Op.ne]: null },
@@ -16,7 +20,7 @@ class BoicotesController {
         include: [{
           model: Autor,
           as: 'autor',
-          attributes: ['nome'],
+          attributes: ['nome', 'visitanteId'],
         },
         {
           model: Link,
@@ -25,8 +29,8 @@ class BoicotesController {
         }],
         attributes: {
           include: [
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true)'), 'cimaVotos'],
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false)'), 'baixoVotos'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt'],
         },
@@ -86,7 +90,7 @@ class BoicotesController {
         include: [{
           model: Autor,
           as: 'autor',
-          attributes: ['nome'],
+          attributes: ['nome', 'visitanteId'],
         },
         {
           model: Link,
@@ -100,13 +104,13 @@ class BoicotesController {
           include: {
             model: Autor,
             // as: 'autor,',
-            attributes: ['nome'],
+            attributes: ['nome', 'visitanteId'],
           },
         }],
         attributes: {
           include: [
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true)'), 'cimaVotos'],
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false)'), 'baixoVotos'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt'],
         },
