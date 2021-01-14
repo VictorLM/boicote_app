@@ -58,7 +58,7 @@ class BoicotesController {
       const boicote = await Boicote.create({
         autorId: autor.id,
         marca: req.body.marca,
-        titulo: req.body.titulo,
+        titulo: (req.body.titulo).replace(/(<([^>]+)>)/gi, ''),
         texto: (req.body.texto).replace(/(<([^>]+)>)/gi, ''),
         tags: req.body.tags,
       });
