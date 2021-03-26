@@ -2,6 +2,41 @@ const { Boicote, Comentario, Autor } = require('../models');
 
 class ComentariosController {
   //
+  async show(req, res) {
+    try {
+      const { boicoteId } = req.params;
+
+      if (!boicoteId) {
+        return res.status(400).json({
+          errors: ['Informe o ID do Boicote.'],
+        });
+      }
+      const boicote = await Boicote.findByPk(boicoteId);
+
+      if (!boicote) {
+        return res.status(400).json({
+          errors: ['Boicote não existe'],
+        });
+      }
+
+      const comentarios = await Comentario.findAll({
+        where: { boicoteId },
+        include: {
+          model: Autor,
+          attributes: ['nome', 'visitanteId'],
+        },
+        attributes: {
+          exclude: ['updatedAt', 'deletedAt'],
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      return res.status(200).json(comentarios);
+    } catch (e) {
+      return res.status(400).json(e.errors);
+    }
+  }
+
   async store(req, res) {
     // TODO - CATCH ERRORS
     try {

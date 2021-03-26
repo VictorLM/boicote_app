@@ -10,7 +10,6 @@ async function novoIP(req) {
       errors: e.errors.map((err) => err.message),
     });
     */
-    console.log(e); // TODO
     return null; // TODO - RETORNAR PARA PRIMEIRA FUNÇÃO E LÁ TRATAR - NÃO DEVOLVER ESSE DA RES
   }
 }
@@ -31,7 +30,6 @@ async function novoVisitante(req) {
       errors: e.errors.map((err) => err.message),
     });
     */
-    console.log(e); // TODO
     return null; // TODO - RETORNAR PARA PRIMEIRA FUNÇÃO E LÁ TRATAR - NÃO DEVOLVER ESSE DA RES
   }
 }

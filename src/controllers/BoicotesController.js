@@ -6,9 +6,8 @@ const {
 class BoicotesController {
   //
   async index(req, res) {
-    // TODO - MANDAR TODOS OS VOTOS DO VISITANTE
     // TODO - PAGINATE
-    // TODO - SORTBY VOTOS?
+    // TODO - SORTBY VOTOS? VAI TER OPÇÃO DE ORDENAR?
     try {
       const boicotes = await Boicote.findAll({
         // limit: 2, PAGINATE
@@ -21,16 +20,12 @@ class BoicotesController {
           model: Autor,
           as: 'autor',
           attributes: ['nome', 'visitanteId'],
-        },
-        {
-          model: Link,
-          as: 'links',
-          attributes: ['link', 'confiavel'],
         }],
         attributes: {
           include: [
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
+            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.boicoteId = boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt'],
         },
@@ -44,15 +39,31 @@ class BoicotesController {
 
   async store(req, res) {
     // TODO - CATCH ERRORS
+    // TODO - UNIQUE TÍTULO VALIDATION RETORNANDO MUITA INFO
+    /*
+    TODO ERROR - UnhandledPromiseRejectionWarning:
+    Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    */
+    // MOSTRAR BOICOTES COM TÍTULOS SIMILARES - TODO - VER SE DA ERRO TITULO UNIQUE E PARANOID
     try {
-      // MOSTRAR BOICOTES COM TÍTULOS SIMILARES - TODO - VER SE DA ERRO TITULO UNIQUE E PARANOID
-      // AUTOR
-      const { nome, email } = req.body;
-      if (!nome || !email) {
+      const { nome, email, links } = req.body;
+
+      if (!nome || !email || !links) {
         return res.status(400).json({
-          errors: ['Favor preencher os campos Nome e E-mail.'],
+          errors: ['Favor preencher os campos Nome, E-mail e ao menos um Link.'],
         });
       }
+
+      // VALIDANDO LINKS
+      Object.values(links).forEach((link) => { //eslint-disable-line
+        if (!Link.isLinkValid(link)) {
+          return res.status(400).json({
+            errors: [`Link inválido: ${link}`],
+          });
+        }
+      });
+
+      // AUTOR
       const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitante);
       // BOICOTE
       const boicote = await Boicote.create({
@@ -63,9 +74,10 @@ class BoicotesController {
         tags: req.body.tags,
       });
       // LINKS
-      Object.values(req.body.links).forEach(async (link) => {
+      Object.values(links).forEach(async (link) => {
         await Link.create({ link, boicoteId: boicote.id });
       });
+
       return res.json(boicote);
     } catch (e) {
       return res.status(400).json(e.errors);
@@ -118,7 +130,6 @@ class BoicotesController {
       });
       return res.status(200).json(boicote);
     } catch (e) {
-      // console.log(e);
       return res.status(400).json(e.errors);
     }
   }

@@ -4,6 +4,26 @@ const {
 
 class VisitantesController {
   //
+  async autores(req, res) {
+    try {
+      const autores = await Autor.findAll({
+        where: { visitanteId: req.cookies.visitante },
+        attributes: {
+          exclude: ['updatedAt', 'deletedAt'],
+        },
+        order: [['createdAt', 'DESC']],
+      });
+
+      if (!autores) {
+        return res.status(200).json('Visitante ainda não é autor.');
+      }
+
+      return res.status(200).json(autores);
+    } catch (e) {
+      return res.status(400).json(e.errors);
+    }
+  }
+
   async boicotes(req, res) {
     try {
       const autor = await Autor.findOne({
@@ -11,11 +31,11 @@ class VisitantesController {
       });
 
       if (!autor) {
-        return res.status(200).json('Visitante ainda não tem nada cadastrado.');
+        return res.status(200).json('Visitante ainda não é autor.');
       }
 
       const boicotes = await Boicote.findAll({
-        where: { autorId: autor.visitanteId },
+        where: { autorId: autor.id },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },
@@ -34,11 +54,11 @@ class VisitantesController {
       });
 
       if (!autor) {
-        return res.status(200).json('Visitante ainda não tem nada cadastrado.');
+        return res.status(200).json('Visitante ainda não é autor.');
       }
 
       const comentarios = await Comentario.findAll({
-        where: { autorId: autor.visitanteId },
+        where: { autorId: autor.id },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },
@@ -52,16 +72,8 @@ class VisitantesController {
 
   async votos(req, res) {
     try {
-      const autor = await Autor.findOne({
-        where: { visitanteId: req.cookies.visitante },
-      });
-
-      if (!autor) {
-        return res.status(200).json('Visitante ainda não tem nada cadastrado.');
-      }
-
       const votos = await Voto.findAll({
-        where: { autorId: autor.visitanteId },
+        where: { visitanteId: req.cookies.visitante },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },

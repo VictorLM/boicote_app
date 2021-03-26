@@ -27,9 +27,11 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
+    // TODO - UNIQUE: DAR UM JEITO DE RETORNAR MENSAGEM DE DUPLICIDADE E LINK BOICOTE JA EXISTENTE
     titulo: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         notNull: {
           msg: 'Preencha o campo Título, por favor.',

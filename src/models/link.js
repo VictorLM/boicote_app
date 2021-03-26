@@ -1,3 +1,5 @@
+const validUrl = require('valid-url');
+
 module.exports = (sequelize, DataTypes) => {
   const Link = sequelize.define('Link', {
     id: {
@@ -47,5 +49,16 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
   */
+  // GAMB VIOLENTA PQ NÃO ESTAVA FUNCIONANDO A VALIDAÇÃO PELO SEQUELIZE
+  Link.isLinkValid = function (link) { // eslint-disable-line
+    return validUrl.isUri(link);
+    /*
+    if (validUrl.isUri(link)) {
+      return true;
+    }
+    return false;
+    */
+  };
+
   return Link;
 };
