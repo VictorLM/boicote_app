@@ -15,7 +15,7 @@ class VisitantesController {
       });
 
       if (!autores) {
-        return res.status(200).json('Visitante ainda não é autor.');
+        return res.status(400).json('Visitante ainda não é autor.');
       }
 
       return res.status(200).json(autores);
@@ -31,13 +31,13 @@ class VisitantesController {
       });
 
       if (!autor) {
-        return res.status(200).json('Visitante ainda não é autor.');
+        return res.status(400).json('Visitante ainda não é autor.');
       }
 
       const boicotes = await Boicote.findAll({
         where: { autorId: autor.id },
         attributes: {
-          exclude: ['updatedAt', 'deletedAt'],
+          exclude: ['updatedAt', 'deletedAt', 'token'],
         },
         order: [['createdAt', 'DESC']],
       });
@@ -54,7 +54,7 @@ class VisitantesController {
       });
 
       if (!autor) {
-        return res.status(200).json('Visitante ainda não é autor.');
+        return res.status(400).json('Visitante ainda não é autor.');
       }
 
       const comentarios = await Comentario.findAll({

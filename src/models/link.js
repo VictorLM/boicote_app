@@ -19,8 +19,11 @@ module.exports = (sequelize, DataTypes) => {
           args: [5, 255],
           msg: 'Os Links devem ter entre 5 e 255 caracteres.',
         },
-        isUrl: {
-          msg: 'Link inválido.',
+        // Eu sei que tem validação pra UEL, mas estava dando pau
+        isUri(link) {
+          if (!validUrl.isUri(link)) {
+            throw new Error(`Link inválido: ${link}`);
+          }
         },
       },
     },

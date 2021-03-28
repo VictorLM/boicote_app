@@ -32,6 +32,10 @@ module.exports = {
         type: Sequelize.JSON,
         allowNull: true,
       },
+      token: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       confirmado: { // PELO LINK ENVIADO NO E-MAIL
         type: Sequelize.DATE,
         allowNull: true,

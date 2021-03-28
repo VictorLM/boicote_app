@@ -13,6 +13,7 @@ Sem login, guardar e recuperar do storage
 Google Analytics
 
 boicoteapp@gmail.com
+boicoteapp@outlook.com
 Twitter: BoicoteApp
 Instagram: BoicoteApp
 Facebook: BoicoteApp

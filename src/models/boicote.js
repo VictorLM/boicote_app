@@ -72,6 +72,20 @@ module.exports = (sequelize, DataTypes) => {
         */
       },
     },
+    token: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    confirmado: { // PELO LINK ENVIADO NO E-MAIL
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+    },
+    aprovado: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+    },
   }, {
     paranoid: true,
     tableName: 'boicotes',

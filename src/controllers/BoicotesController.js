@@ -1,7 +1,11 @@
 const { Op, literal } = require('sequelize');
+const Crypto = require('crypto');
 const {
   Boicote, Autor, Link, Comentario,
 } = require('../models');
+const nodemailer = require('../config/nodemailer');
+const confirmaBoicoteHtmlTemplate = require('../emails/confirmaBoicoteHtmlTemplate');
+require('dotenv').config();
 
 class BoicotesController {
   //
@@ -27,7 +31,7 @@ class BoicotesController {
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
             [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.boicoteId = boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
           ],
-          exclude: ['autorId', 'updatedAt', 'deletedAt'],
+          exclude: ['autorId', 'updatedAt', 'deletedAt', 'token'],
         },
         order: [['createdAt', 'DESC']],
       });
@@ -53,8 +57,7 @@ class BoicotesController {
           errors: ['Favor preencher os campos Nome, E-mail e ao menos um Link.'],
         });
       }
-
-      // VALIDANDO LINKS
+      // VALIDANDO LINKS - NÃO CONSEGUI USAR O VALIDATOR DO SEQUELIZE
       Object.values(links).forEach((link) => { //eslint-disable-line
         if (!Link.isLinkValid(link)) {
           return res.status(400).json({
@@ -62,7 +65,6 @@ class BoicotesController {
           });
         }
       });
-
       // AUTOR
       const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitante);
       // BOICOTE
@@ -72,12 +74,24 @@ class BoicotesController {
         titulo: (req.body.titulo).replace(/(<([^>]+)>)/gi, ''),
         texto: (req.body.texto).replace(/(<([^>]+)>)/gi, ''),
         tags: req.body.tags,
+        aprovado: Date.now(), // TODO - SISTEMA DE APROVAÇÃO
+        token: Crypto.randomBytes(100).toString('hex').slice(0, 100),
       });
       // LINKS
       Object.values(links).forEach(async (link) => {
         await Link.create({ link, boicoteId: boicote.id });
       });
-
+      // ENVIAR E-MAIL PARA O AUTOR CONFIRMAR
+      const html = confirmaBoicoteHtmlTemplate(boicote, autor);
+      const mail = {
+        from: `"Boicote.App" <${process.env.MAIL_USERNAME}>`,
+        to: autor.email,
+        subject: 'Confirmação a criação do seu Boicote criado no Boicote.App',
+        html,
+      };
+      nodemailer.sendMail(mail);
+      //
+      boicote.token = null; // GAMB VIOLENTA. SEQUELIZE SHOW DE BOLA.
       return res.json(boicote);
     } catch (e) {
       return res.status(400).json(e.errors);
@@ -124,11 +138,58 @@ class BoicotesController {
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
           ],
-          exclude: ['autorId', 'updatedAt', 'deletedAt'],
+          exclude: ['autorId', 'updatedAt', 'deletedAt', 'token'],
         },
         order: [['comentarios', 'createdAt', 'ASC']],
       });
+
+      if (!boicote) {
+        return res.status(400).json({
+          errors: ['Boicote não existe'],
+        });
+      }
+
       return res.status(200).json(boicote);
+    } catch (e) {
+      return res.status(400).json(e.errors);
+    }
+  }
+
+  async confirmar(req, res) {
+    try {
+      const { token, boicoteId } = req.params;
+
+      if (!token || !boicoteId) {
+        return res.status(400).json({
+          errors: ['Informe o Token e o Boicote.'],
+        });
+      }
+
+      const boicote = await Boicote.findByPk(boicoteId);
+
+      if (!boicote) {
+        return res.status(400).json({
+          errors: ['Boicote não existe'],
+        });
+      }
+
+      if (boicote.token !== token) {
+        return res.status(400).json({
+          errors: ['Token inválido.'],
+        });
+      }
+
+      if (boicote.confirmado === null) {
+        boicote.confirmado = Date.now();
+        boicote.save();
+
+        return res.status(200).json({
+          message: ['Boicote confirmado com sucesso.'],
+        });
+      }
+      return res.status(400).json({
+        errors: ['Boicote já confirmado.'],
+      });
     } catch (e) {
       return res.status(400).json(e.errors);
     }
