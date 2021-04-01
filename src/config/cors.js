@@ -1,5 +1,9 @@
 const whiteList = [
   'http://localhost:3000', // TODO
+  'http://boicote.app',
+  'https://boicote.app',
+  'http://www.boicote.app',
+  'https://www.boicote.app',
 ];
 
 const corsOptions = {

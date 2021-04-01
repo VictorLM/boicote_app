@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const { checkVisitanteMiddleware } = require('./middlewares/visitante.js');
+// const { checkVisitanteMiddleware } = require('./middlewares/visitante.js');
 
 const corsOptions = require('./config/cors'); // TODO - FECHAR PARA DOMINIO APP
 // Routes
@@ -23,7 +23,7 @@ class App {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(cookieParser());
-    this.app.use(checkVisitanteMiddleware);
+    // this.app.use(checkVisitanteMiddleware); DESATIVADO. FRONT REACT. CRIADA ROTA P/ ISSO
     // this.app.use('/images/', express.static(resolve(__dirname, '..', 'uploads', 'images')));
   }
 

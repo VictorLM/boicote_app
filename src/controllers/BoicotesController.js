@@ -1,7 +1,7 @@
 const { Op, literal } = require('sequelize');
 const Crypto = require('crypto');
 const {
-  Boicote, Autor, Link, Comentario,
+  Boicote, Autor, Link,
 } = require('../models');
 const nodemailer = require('../config/nodemailer');
 const confirmaBoicoteHtmlTemplate = require('../emails/confirmaBoicoteHtmlTemplate');
@@ -122,25 +122,16 @@ class BoicotesController {
           model: Link,
           as: 'links',
           attributes: ['link', 'confiavel'],
-        },
-        {
-          model: Comentario,
-          as: 'comentarios',
-          attributes: ['comentario'],
-          include: {
-            model: Autor,
-            // as: 'autor,',
-            attributes: ['nome', 'visitanteId'],
-          },
         }],
         attributes: {
           include: [
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
+            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.boicoteId = boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt', 'token'],
         },
-        order: [['comentarios', 'createdAt', 'ASC']],
+        order: [['createdAt', 'ASC']],
       });
 
       if (!boicote) {

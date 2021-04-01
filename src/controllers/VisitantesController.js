@@ -1,9 +1,32 @@
 const {
-  Boicote, Comentario, Voto, Autor,
+  Boicote, Comentario, Voto, Autor, IP, Visitante,
 } = require('../models');
 
 class VisitantesController {
   //
+  async novoVisitante(req, res) {
+    // TODO - CHECAR SPAM PELO IP E BLOQUEAR
+    try {
+      // console.log(req.ip);
+      // DESFAZER MIDDLEWARE
+      const novoIp = await IP.upsert(req.ip);
+
+      const novoVisitante = await Visitante.create({
+        IpId: novoIp.id,
+        agente: req.headers['user-agent'] ? req.headers['user-agent'].substr(0, 254) : null,
+      });
+
+      return res.status(200).json(novoVisitante.id);
+    } catch (e) {
+      return res.status(500).json(e.errors);
+    }
+    //
+  }
+
+  teste(req, res) {
+    return res.status(200).json('teste');
+  }
+
   async autores(req, res) {
     try {
       const autores = await Autor.findAll({
