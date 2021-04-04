@@ -5,7 +5,7 @@ class VotosController {
   async index(req, res) {
     try {
       const votos = await Voto.findAll({
-        where: { visitanteId: req.cookies.visitante },
+        where: { visitanteId: req.cookies.visitanteId },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },
@@ -33,7 +33,7 @@ class VotosController {
       // CHECAR SE JÁ NÃO VOTOU
       const jaVotou = await Voto.findOne({
         where: {
-          visitanteId: req.cookies.visitante,
+          visitanteId: req.cookies.visitanteId,
           boicoteId,
         },
       });
@@ -56,7 +56,7 @@ class VotosController {
 
       const voto = await Voto.create({
         boicoteId,
-        visitanteId: req.cookies.visitante,
+        visitanteId: req.cookies.visitanteId,
         cima,
       });
 

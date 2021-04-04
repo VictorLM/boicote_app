@@ -7,8 +7,6 @@ class VisitantesController {
   async novoVisitante(req, res) {
     // TODO - CHECAR SPAM PELO IP E BLOQUEAR
     try {
-      // console.log(req.ip);
-      // DESFAZER MIDDLEWARE
       const novoIp = await IP.upsert(req.ip);
 
       const novoVisitante = await Visitante.create({
@@ -23,14 +21,10 @@ class VisitantesController {
     //
   }
 
-  teste(req, res) {
-    return res.status(200).json('teste');
-  }
-
   async autores(req, res) {
     try {
       const autores = await Autor.findAll({
-        where: { visitanteId: req.cookies.visitante },
+        where: { visitanteId: req.cookies.visitanteId },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },
@@ -50,7 +44,7 @@ class VisitantesController {
   async boicotes(req, res) {
     try {
       const autor = await Autor.findOne({
-        where: { visitanteId: req.cookies.visitante },
+        where: { visitanteId: req.cookies.visitanteId },
       });
 
       if (!autor) {
@@ -73,7 +67,7 @@ class VisitantesController {
   async comentarios(req, res) {
     try {
       const autor = await Autor.findOne({
-        where: { visitanteId: req.cookies.visitante },
+        where: { visitanteId: req.cookies.visitanteId },
       });
 
       if (!autor) {
@@ -96,7 +90,7 @@ class VisitantesController {
   async votos(req, res) {
     try {
       const votos = await Voto.findAll({
-        where: { visitanteId: req.cookies.visitante },
+        where: { visitanteId: req.cookies.visitanteId },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },

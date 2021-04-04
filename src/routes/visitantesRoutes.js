@@ -3,7 +3,6 @@ const VisitantesController = require('../controllers/VisitantesController');
 
 const router = new Router();
 
-router.get('/teste', VisitantesController.teste);
 router.get('/novo-visitante', VisitantesController.novoVisitante);
 router.get('/autores', VisitantesController.autores);
 router.get('/boicotes', VisitantesController.boicotes);

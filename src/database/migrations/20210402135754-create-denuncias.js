@@ -1,27 +1,41 @@
+module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('links', {
+    await queryInterface.createTable('denuncias', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      link: {
+      texto: {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      autorId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'autores',
+          key: 'id',
+        },
+      },
       boicoteId: {
         type: Sequelize.CHAR(36),
-        allowNull: false,
+        allowNull: true,
+        defaultValue: null,
         references: {
           model: 'boicotes',
           key: 'id',
         },
       },
-      confiavel: {
-        type: Sequelize.DATE,
+      comentarioId: {
+        type: Sequelize.INTEGER,
         allowNull: true,
         defaultValue: null,
+        references: {
+          model: 'comentarios',
+          key: 'id',
+        },
       },
       // Timestamps
       createdAt: {
@@ -31,11 +45,9 @@
       updatedAt: {
         type: Sequelize.DATE,
       },
-      // Paranoid
-      deletedAt: Sequelize.DATE,
     });
   },
   down: async (queryInterface) => {
-    await queryInterface.dropTable('links');
+    await queryInterface.dropTable('denuncias');
   },
 };

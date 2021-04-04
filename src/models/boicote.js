@@ -111,6 +111,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'boicoteId',
       as: 'comentarios',
     });
+
+    Boicote.hasMany(models.Denuncia, {
+      foreignKey: 'boicoteId',
+      as: 'denuncias',
+    });
   };
 
   return Boicote;

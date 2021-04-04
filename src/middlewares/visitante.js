@@ -36,8 +36,8 @@ async function novoVisitante(req) {
 
 async function checkVisitanteMiddleware(req, res, next) {
   let visitante = null;
-  if (req.cookies.visitante) {
-    visitante = await Visitante.findByPk(req.cookies.visitante);
+  if (req.cookies.visitanteId) {
+    visitante = await Visitante.findByPk(req.cookies.visitanteId);
   }
 
   if (!visitante) {

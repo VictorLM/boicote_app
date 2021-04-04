@@ -1,17 +1,17 @@
 module.exports = (sequelize, DataTypes) => {
-  const Comentario = sequelize.define('Comentario', {
+  const Denuncia = sequelize.define('Denuncia', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    comentario: {
+    texto: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notNull: {
-          msg: 'Preencha o campo Comentário, por favor.',
+          msg: 'Preencha o campo Texto, por favor.',
         },
         len: {
           args: [3, 255],
@@ -29,30 +29,25 @@ module.exports = (sequelize, DataTypes) => {
     },
     boicoteId: {
       type: DataTypes.CHAR(36),
-      allowNull: false,
+      allowNull: true,
+      defaultValue: null,
       references: {
         model: 'boicotes',
         key: 'id',
       },
     },
-    confiavel: {
-      type: DataTypes.DATE,
+    comentarioId: {
+      type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: null,
+      references: {
+        model: 'comentarios',
+        key: 'id',
+      },
     },
   }, {
-    paranoid: true,
-    tableName: 'comentarios',
+    tableName: 'denuncias',
   });
 
-  Comentario.associate = function (models) {
-    Comentario.belongsTo(models.Autor);
-
-    Comentario.hasMany(models.Denuncia, {
-      foreignKey: 'comentarioId',
-      as: 'denuncias',
-    });
-  };
-
-  return Comentario;
+  return Denuncia;
 };

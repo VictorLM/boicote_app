@@ -66,7 +66,7 @@ class BoicotesController {
         }
       });
       // AUTOR
-      const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitante);
+      const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitanteId);
       // BOICOTE
       const boicote = await Boicote.create({
         autorId: autor.id,

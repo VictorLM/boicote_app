@@ -48,20 +48,21 @@ class ComentariosController {
           errors: ['Informe o ID do Boicote.'],
         });
       }
-      if (!nome || !email) {
+      if (!nome || !email || !comentario) {
         return res.status(400).json({
-          errors: ['Favor preencher os campos Nome e E-mail.'],
+          errors: ['Favor preencher todos os campos do formulário.'],
         });
       }
 
       const boicote = await Boicote.findByPk(boicoteId);
+
       if (!boicote) {
         return res.status(400).json({
           errors: ['Boicote não existe.'],
         });
       }
 
-      const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitante);
+      const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitanteId);
 
       const novoComentario = await Comentario.create({
         comentario: comentario.replace(/(<([^>]+)>)/gi, ''),
@@ -69,7 +70,18 @@ class ComentariosController {
         autorId: autor.id,
       });
 
-      return res.json(novoComentario);
+      // GAMB VIOLENTA P/ INCLUIR AUTOR PORQUE NÃO ACHEI OUTRO JEITO, NEM NOS DOCS DO SEQUELIZE
+      const comentarioComIncludes = await Comentario.findByPk(novoComentario.id, {
+        include: {
+          model: Autor,
+          attributes: ['nome', 'visitanteId'],
+        },
+        attributes: {
+          exclude: ['updatedAt', 'deletedAt'],
+        },
+      });
+
+      return res.json(comentarioComIncludes);
     } catch (e) {
       return res.status(400).json(e.errors);
     }
