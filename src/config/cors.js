@@ -1,5 +1,5 @@
 const whiteList = [
-  'http://localhost:3000', // TODO
+  // 'http://localhost:3000',
   'http://boicote.app',
   'https://boicote.app',
   'http://www.boicote.app',
