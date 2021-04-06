@@ -29,7 +29,7 @@ class BoicotesController {
           include: [
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = Boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
             [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = Boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
-            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.Boicote = boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
+            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.boicoteId = Boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt', 'token'],
         },
@@ -37,6 +37,7 @@ class BoicotesController {
       });
       return res.status(200).json(boicotes);
     } catch (e) {
+      console.log(e);
       return res.status(400).json(e.errors);
     }
   }
