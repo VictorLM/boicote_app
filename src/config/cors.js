@@ -1,10 +1,21 @@
-const whiteList = [
-  // 'http://localhost:3000',
-  'http://boicote.app',
-  'https://boicote.app',
-  'http://www.boicote.app',
-  'https://www.boicote.app',
-];
+require('dotenv').config();
+
+let whiteList = [];
+
+if (process.env.NODE_ENV === 'production') {
+  whiteList = [
+    'http://boicote.app',
+    'https://boicote.app',
+    'http://www.boicote.app',
+    'https://www.boicote.app',
+  ];
+} else if (process.env.NODE_ENV === 'development') {
+  whiteList = [
+    'http://localhost.local:3000',
+    'http://localhost:3000',
+    'http://localhost',
+  ];
+}
 
 const corsOptions = {
   origin(origin, callback) {

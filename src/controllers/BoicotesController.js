@@ -42,6 +42,8 @@ class BoicotesController {
   }
 
   async store(req, res) {
+    // TODO - IF !visitanteId, return mensagem
+
     // TODO - CATCH ERRORS
     // TODO - UNIQUE TÍTULO VALIDATION RETORNANDO MUITA INFO
     /*
