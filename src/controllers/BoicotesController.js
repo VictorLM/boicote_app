@@ -27,9 +27,9 @@ class BoicotesController {
         }],
         attributes: {
           include: [
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
-            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.boicoteId = boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = Boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = Boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
+            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.Boicote = boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt', 'token'],
         },
@@ -127,9 +127,9 @@ class BoicotesController {
         }],
         attributes: {
           include: [
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
-            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
-            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.boicoteId = boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = Boicote.id AND votos.cima = true AND deletedAt IS NULL)'), 'cimaVotos'],
+            [literal('(SELECT COUNT(*) FROM votos WHERE votos.boicoteId = Boicote.id AND votos.cima = false AND deletedAt IS NULL)'), 'baixoVotos'],
+            [literal('(SELECT COUNT(*) FROM comentarios WHERE comentarios.boicoteId = Boicote.id AND deletedAt IS NULL)'), 'comentariosCount'],
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt', 'token'],
         },
