@@ -7,7 +7,7 @@ module.exports = {
         type: Sequelize.CHAR(36),
         defaultValue: Sequelize.UUIDV4,
       },
-      IpId: { // TODO - COMO GUARDAR HISTÓRICO DE IPS E CLIENTS?
+      IpId: { // TODO - COMO GUARDAR HISTÓRICO DE IPS E VISITANTES?
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {

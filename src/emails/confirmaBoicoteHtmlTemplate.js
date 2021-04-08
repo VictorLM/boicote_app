@@ -1,5 +1,5 @@
 require('dotenv').config();
-// TODO - COLOCAR ENDEREÇO REACT?
+
 function html(boicote, autor) {
   const body = `<p>Olá <b>${autor.nome}</b>. Por favor, confirme a criação do boicote "<b>${boicote.titulo}</b>" criado no <b>Boicote.App</b></p>
   <p>É só clicar <a href="${process.env.APP_FRONTEND_URL}/boicotes/confirmar/${boicote.id}/${boicote.token}">neste link</a>,

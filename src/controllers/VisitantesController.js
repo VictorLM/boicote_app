@@ -23,8 +23,16 @@ class VisitantesController {
 
   async autores(req, res) {
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const autores = await Autor.findAll({
-        where: { visitanteId: req.cookies.visitanteId },
+        where: { visitanteId },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },
@@ -32,7 +40,9 @@ class VisitantesController {
       });
 
       if (!autores) {
-        return res.status(400).json('Visitante ainda não é autor.');
+        return res.status(400).json([{
+          message: 'Visitante ainda não é autor.',
+        }]);
       }
 
       return res.status(200).json(autores);
@@ -43,12 +53,22 @@ class VisitantesController {
 
   async boicotes(req, res) {
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const autor = await Autor.findOne({
-        where: { visitanteId: req.cookies.visitanteId },
+        where: { visitanteId },
       });
 
       if (!autor) {
-        return res.status(400).json('Visitante ainda não é autor.');
+        return res.status(400).json([{
+          message: 'Visitante ainda não é autor.',
+        }]);
       }
 
       const boicotes = await Boicote.findAll({
@@ -66,12 +86,22 @@ class VisitantesController {
 
   async comentarios(req, res) {
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const autor = await Autor.findOne({
-        where: { visitanteId: req.cookies.visitanteId },
+        where: { visitanteId },
       });
 
       if (!autor) {
-        return res.status(400).json('Visitante ainda não é autor.');
+        return res.status(400).json([{
+          message: 'Visitante ainda não é autor.',
+        }]);
       }
 
       const comentarios = await Comentario.findAll({
@@ -89,8 +119,16 @@ class VisitantesController {
 
   async votos(req, res) {
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const votos = await Voto.findAll({
-        where: { visitanteId: req.cookies.visitanteId },
+        where: { visitanteId },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },

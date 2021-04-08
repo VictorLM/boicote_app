@@ -1,9 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 // const { checkVisitanteMiddleware } = require('./middlewares/visitante.js');
 
-const corsOptions = require('./config/cors'); // TODO - FECHAR PARA DOMINIO APP
+const corsOptions = require('./config/cors');
 // Routes
 const boicotesRoutes = require('./routes/boicotesRoutes');
 const votosRoutes = require('./routes/votosRoutes');
@@ -20,7 +21,7 @@ class App {
 
   middlewares() {
     this.app.use(cors(corsOptions));
-    // this.app.use(helmet());
+    this.app.use(helmet());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(cookieParser());
@@ -43,5 +44,3 @@ class App {
 }
 
 module.exports = new App().app;
-
-// TODO - LOG ERRORS DB

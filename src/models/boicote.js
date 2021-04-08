@@ -27,11 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
-    // TODO - UNIQUE: DAR UM JEITO DE RETORNAR MENSAGEM DE DUPLICIDADE E LINK BOICOTE JA EXISTENTE
     titulo: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
       validate: {
         notNull: {
           msg: 'Preencha o campo Título, por favor.',
@@ -60,16 +58,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSON,
       allowNull: true,
       validate: {
-        len: { // TODO - VALIDAR JSON
+        len: {
           args: [0, 50],
           msg: 'Você deve selecionar no máximo 5 Tags.',
         },
-        /*
-        isIn: { // TODO
-          args: [['tag1', 'tag2', 'tag3']],
-          msg: 'Tag(s) inválida(s).',
-        },
-        */
       },
     },
     token: {

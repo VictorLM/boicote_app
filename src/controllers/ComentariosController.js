@@ -7,16 +7,16 @@ class ComentariosController {
       const { boicoteId } = req.params;
 
       if (!boicoteId) {
-        return res.status(400).json({
-          errors: ['Informe o ID do Boicote.'],
-        });
+        return res.status(400).json([{
+          message: 'Informe o ID do Boicote.',
+        }]);
       }
       const boicote = await Boicote.findByPk(boicoteId);
 
       if (!boicote) {
-        return res.status(400).json({
-          errors: ['Boicote não existe'],
-        });
+        return res.status(400).json([{
+          message: 'Boicote não existe.',
+        }]);
       }
 
       const comentarios = await Comentario.findAll({
@@ -38,31 +38,39 @@ class ComentariosController {
   }
 
   async store(req, res) {
-    // TODO - CATCH ERRORS
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const { boicoteId } = req.params;
       const { nome, email, comentario } = req.body;
 
       if (!boicoteId) {
-        return res.status(400).json({
-          errors: ['Informe o ID do Boicote.'],
-        });
+        return res.status(400).json([{
+          message: 'Informe o ID do Boicote.',
+        }]);
       }
+
       if (!nome || !email || !comentario) {
-        return res.status(400).json({
-          errors: ['Favor preencher todos os campos do formulário.'],
-        });
+        return res.status(400).json([{
+          message: 'Favor preencher todos os campos do formulário.',
+        }]);
       }
 
       const boicote = await Boicote.findByPk(boicoteId);
 
       if (!boicote) {
-        return res.status(400).json({
-          errors: ['Boicote não existe.'],
-        });
+        return res.status(400).json([{
+          message: 'Boicote não existe.',
+        }]);
       }
 
-      const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitanteId);
+      const autor = await Autor.encontreOuCrie(nome, email, visitanteId);
 
       const novoComentario = await Comentario.create({
         comentario: comentario.replace(/(<([^>]+)>)/gi, ''),

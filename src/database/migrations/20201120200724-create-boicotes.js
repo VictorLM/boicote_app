@@ -22,7 +22,6 @@ module.exports = {
       titulo: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true, // TODO - REGISTROS C/ DELETE PARANOID CONTAM?
       },
       texto: { // TODO - AVISAR SOMENTE TEXTO, REFERENCIAR LINKS 1, 2, 3...
         type: Sequelize.STRING(2000),

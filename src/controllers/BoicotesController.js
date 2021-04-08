@@ -10,15 +10,19 @@ require('dotenv').config();
 class BoicotesController {
   //
   async index(req, res) {
-    // TODO - PAGINATE
-    // TODO - SORTBY VOTOS? VAI TER OPÇÃO DE ORDENAR?
+    // TODO - IMPLEMENTAR OPÇÃO DE ORDENAR POR VOTOS, DATA, ETC
+    const pagina = req.query.pagina ? Number(req.query.pagina) : 1;
+    const limite = 10; // LIMITE POR PÁGINA
     try {
       const boicotes = await Boicote.findAll({
-        // limit: 2, PAGINATE
-        // offset: 1, PAGINATE
+        // PAGINATION
+        limit: limite,
+        offset: (pagina - 1) * limite,
+        //
         where: {
           confirmado: { [Op.ne]: null },
           aprovado: { [Op.ne]: null },
+          deletedAt: null,
         },
         include: [{
           model: Autor,
@@ -35,41 +39,49 @@ class BoicotesController {
         },
         order: [['createdAt', 'DESC']],
       });
-      return res.status(200).json(boicotes);
+
+      // COUNT PARA O PAGINATION
+      const boicotesTotalCount = await Boicote.count({
+        where: {
+          confirmado: { [Op.ne]: null },
+          aprovado: { [Op.ne]: null },
+          deletedAt: null,
+        },
+      });
+      return res.status(200).json({ boicotesTotalCount, boicotes });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return res.status(400).json(e.errors);
     }
   }
 
   async store(req, res) {
-    // TODO - IF !visitanteId, return mensagem
-
-    // TODO - CATCH ERRORS
-    // TODO - UNIQUE TÍTULO VALIDATION RETORNANDO MUITA INFO
-    /*
-    TODO ERROR - UnhandledPromiseRejectionWarning:
-    Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
-    */
-    // MOSTRAR BOICOTES COM TÍTULOS SIMILARES - TODO - VER SE DA ERRO TITULO UNIQUE E PARANOID
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const { nome, email, links } = req.body;
 
       if (!nome || !email || !links) {
-        return res.status(400).json({
-          errors: ['Favor preencher os campos Nome, E-mail e ao menos um Link.'],
-        });
+        return res.status(400).json([{
+          message: 'Preencha os campos Nome, E-mail e ao menos um Link.',
+        }]);
       }
       // VALIDANDO LINKS - NÃO CONSEGUI USAR O VALIDATOR DO SEQUELIZE
       Object.values(links).forEach((link) => { //eslint-disable-line
         if (!Link.isLinkValid(link)) {
-          return res.status(400).json({
-            errors: [`Link inválido: ${link}`],
-          });
+          return res.status(400).json([{
+            message: `Link inválido: ${link}`,
+          }]);
         }
       });
       // AUTOR
-      const autor = await Autor.encontreOuCrie(nome, email, req.cookies.visitanteId);
+      const autor = await Autor.encontreOuCrie(nome, email, visitanteId);
       // BOICOTE
       const boicote = await Boicote.create({
         autorId: autor.id,
@@ -106,15 +118,16 @@ class BoicotesController {
       const { id } = req.params;
 
       if (!id) {
-        return res.status(400).json({
-          errors: ['Informe o ID do Boicote.'],
-        });
+        return res.status(400).json([{
+          message: 'Informe o ID do Boicote.',
+        }]);
       }
       const boicote = await Boicote.findOne({
         where: {
           id,
           confirmado: { [Op.ne]: null },
           aprovado: { [Op.ne]: null },
+          deletedAt: null,
         },
         include: [{
           model: Autor,
@@ -138,9 +151,9 @@ class BoicotesController {
       });
 
       if (!boicote) {
-        return res.status(400).json({
-          errors: ['Boicote não existe'],
-        });
+        return res.status(400).json([{
+          message: 'Boicote não existe.',
+        }]);
       }
 
       return res.status(200).json(boicote);
@@ -154,36 +167,36 @@ class BoicotesController {
       const { token, boicoteId } = req.params;
 
       if (!token || !boicoteId) {
-        return res.status(400).json({
-          errors: ['Informe o Token e o Boicote.'],
-        });
+        return res.status(400).json([{
+          message: 'Informe o Token e o ID do Boicote.',
+        }]);
       }
 
       const boicote = await Boicote.findByPk(boicoteId);
 
       if (!boicote) {
-        return res.status(400).json({
-          errors: ['Boicote não existe'],
-        });
+        return res.status(400).json([{
+          message: 'Boicote não existe.',
+        }]);
       }
 
       if (boicote.token !== token) {
-        return res.status(400).json({
-          errors: ['Token inválido.'],
-        });
+        return res.status(400).json([{
+          message: 'Token inválido.',
+        }]);
       }
 
       if (boicote.confirmado === null) {
         boicote.confirmado = Date.now();
         boicote.save();
 
-        return res.status(200).json({
-          message: ['Boicote confirmado com sucesso.'],
-        });
+        return res.status(200).json([{
+          message: 'Boicote confirmado com sucesso.',
+        }]);
       }
-      return res.status(400).json({
-        errors: ['Boicote já confirmado.'],
-      });
+      return res.status(400).json([{
+        message: 'Boicote já confirmado.',
+      }]);
     } catch (e) {
       return res.status(400).json(e.errors);
     }
@@ -191,32 +204,7 @@ class BoicotesController {
 
   /*
   async delete(req, res) { // TODO - CONFIRMAR EXCLUSÃO POR E-MAIL
-    try {
-      const { id } = req.params;
-
-      if (!id) {
-        return res.status(400).json({
-          errors: ['Informe o ID'],
-        });
-      }
-
-      const boicote = await Boicote.findByPk(id);
-
-      if (!boicote) {
-        return res.status(400).json({
-          errors: ['Texto não existe'],
-        });
-      }
-
-      await boicote.destroy();
-      return res.json({
-        deleted: true,
-      });
-    } catch (e) {
-      return res.status(400).json({
-        errors: e.errors.map((err) => err.message),
-      });
-    }
+    // TODO
   }
   */
   //

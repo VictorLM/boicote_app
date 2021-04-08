@@ -4,8 +4,16 @@ class VotosController {
   //
   async index(req, res) {
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const votos = await Voto.findAll({
-        where: { visitanteId: req.cookies.visitanteId },
+        where: { visitanteId },
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },
@@ -18,22 +26,29 @@ class VotosController {
   }
 
   async store(req, res) {
-    // TODO - CATCH ERRORS
-    // TODO - DEPLOY OPÇÕES DE DESVOTAR CIMA E BAIXOVOTOS
+    // TODO - DEPLOY OPÇÕES DE DESVOTAR
     try {
+      const { visitanteId } = req.cookies;
+
+      if (!visitanteId) {
+        return res.status(400).json([{
+          message: 'ID do visitante não encontrado. Recarregar a página pode resolver o problema.',
+        }]);
+      }
+
       const { boicoteId } = req.params;
       const { cima } = req.body;
 
       if (!boicoteId || !('cima' in req.body)) {
-        return res.status(400).json({
-          errors: ['Informe o ID do Boicote e o tipo de Voto'],
-        });
+        return res.status(400).json([{
+          message: 'Informe o ID do Boicote e o tipo de Voto.',
+        }]);
       }
 
       // CHECAR SE JÁ NÃO VOTOU
       const jaVotou = await Voto.findOne({
         where: {
-          visitanteId: req.cookies.visitanteId,
+          visitanteId,
           boicoteId,
         },
       });
@@ -49,19 +64,17 @@ class VotosController {
       const boicote = await Boicote.findByPk(boicoteId);
 
       if (!boicote) {
-        return res.status(400).json({
-          errors: ['Boicote não existe'],
-        });
+        return res.status(400).json([{
+          message: 'Boicote não existe.',
+        }]);
       }
 
       const voto = await Voto.create({
         boicoteId,
-        visitanteId: req.cookies.visitanteId,
+        visitanteId,
         cima,
       });
 
-      // TODO - RETORNAR VOTO PARA O FRONT MARCAR
-      // TODO - RETORNAR SÓ CAMPOS QUE SERÃO USADOS
       return res.json(voto);
     } catch (e) {
       return res.status(400).json(e.errors);

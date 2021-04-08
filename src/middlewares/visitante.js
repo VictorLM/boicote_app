@@ -1,3 +1,6 @@
+// ESSE MIDDLEWARE NÃO ESTÁ MAIS SENDO UTILIZADO.
+// CRIADA UMA ROTA ESPECÍFICA PARA ISSO, POR CONTA DO FRONT REACT
+
 const { IP, Visitante } = require('../models');
 
 async function novoIP(req) {
@@ -5,11 +8,6 @@ async function novoIP(req) {
     const novoIp = await IP.upsert(req.ip);
     return novoIp;
   } catch (e) {
-    /*
-    return res.status(400).json({
-      errors: e.errors.map((err) => err.message),
-    });
-    */
     return null; // TODO - RETORNAR PARA PRIMEIRA FUNÇÃO E LÁ TRATAR - NÃO DEVOLVER ESSE DA RES
   }
 }
@@ -25,11 +23,6 @@ async function novoVisitante(req) {
     });
     return nVisitante.id;
   } catch (e) {
-    /*
-    return res.status(400).json({
-      errors: e.errors.map((err) => err.message),
-    });
-    */
     return null; // TODO - RETORNAR PARA PRIMEIRA FUNÇÃO E LÁ TRATAR - NÃO DEVOLVER ESSE DA RES
   }
 }
