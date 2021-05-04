@@ -10,14 +10,25 @@ require('dotenv').config();
 class BoicotesController {
   //
   async index(req, res) {
-    // TODO - IMPLEMENTAR OPÇÃO DE ORDENAR POR VOTOS, DATA, ETC
-    const pagina = req.query.pagina ? Number(req.query.pagina) : 1;
-    const limite = 10; // LIMITE POR PÁGINA
+    // LIMITE POR PÁGINA (PADRÃO 10)
+    let limite = req.query.limite ? Number(req.query.limite) : 10;
+    limite = Number.isNaN(limite) ? 10 : limite;
+    // PÁGINA PAGINATION (PADRÃO 1)
+    let pagina = req.query.pagina ? Number(req.query.pagina) : 1;
+    pagina = Number.isNaN(pagina) ? 1 : pagina;
+    // POR ENQUANTO SÓ ORDENA POR MAIS VOTADOS (PADRÃO) E MAIS RECENTES
+    const { ordenar } = req.query;
+    let orderByVotos = false;
+
+    if (ordenar && ordenar === 'mais_votados') {
+      orderByVotos = true;
+    }
+
     try {
       const boicotes = await Boicote.findAll({
         // PAGINATION
-        limit: limite,
-        offset: (pagina - 1) * limite,
+        limit: limite > 10 ? 10 : limite,
+        offset: (pagina - 1) * (limite > 10 ? 10 : limite),
         //
         where: {
           confirmado: { [Op.ne]: null },
@@ -37,7 +48,10 @@ class BoicotesController {
           ],
           exclude: ['autorId', 'updatedAt', 'deletedAt', 'token'],
         },
-        order: [['createdAt', 'DESC']],
+        // order: [['cimaVotos', 'DESC']],
+        order: [
+          orderByVotos ? [literal('cimaVotos DESC')] : ['createdAt', 'DESC'],
+        ],
       });
 
       // COUNT PARA O PAGINATION
@@ -50,7 +64,7 @@ class BoicotesController {
       });
       return res.status(200).json({ boicotesTotalCount, boicotes });
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       return res.status(400).json(e.errors);
     }
   }
@@ -92,7 +106,7 @@ class BoicotesController {
         aprovado: Date.now(), // TODO - SISTEMA DE APROVAÇÃO
         token: Crypto.randomBytes(100).toString('hex').slice(0, 100),
       });
-      // LINKS
+      // LINKS - TODO - ACHO QUE DA PRA MUDAR PRA MAP SE ENVIAR SÓ ARRAY PELO FRONT
       Object.values(links).forEach(async (link) => {
         await Link.create({ link, boicoteId: boicote.id });
       });
@@ -204,7 +218,7 @@ class BoicotesController {
 
   /*
   async delete(req, res) { // TODO - CONFIRMAR EXCLUSÃO POR E-MAIL
-    // TODO
+
   }
   */
   //

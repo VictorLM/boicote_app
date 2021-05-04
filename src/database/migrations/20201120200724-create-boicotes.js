@@ -29,7 +29,7 @@ module.exports = {
       },
       tags: { // PARA CATEGORIZAR - TODO - FECHAR OPÇÕES DEPOIS DE UM TEMPO
         type: Sequelize.JSON,
-        allowNull: true,
+        allowNull: false,
       },
       token: {
         type: Sequelize.STRING,

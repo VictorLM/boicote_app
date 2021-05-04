@@ -56,8 +56,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     tags: {
       type: DataTypes.JSON,
-      allowNull: true,
+      allowNull: false,
       validate: {
+        notNull: {
+          msg: 'Insira ao menos uma tag, por favor.',
+        },
         len: {
           args: [0, 50],
           msg: 'Você deve selecionar no máximo 5 Tags.',
