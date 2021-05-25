@@ -11,6 +11,7 @@ const votosRoutes = require('./routes/votosRoutes');
 const comentariosRoutes = require('./routes/comentariosRoutes');
 const visitantesRoutes = require('./routes/visitantesRoutes');
 const denunciasRoutes = require('./routes/denunciasRoutes');
+const twitterApiRoutes = require('./routes/twitterApiRoutes');
 
 class App {
   constructor() {
@@ -40,6 +41,8 @@ class App {
     this.app.use('/visitantes/', visitantesRoutes);
     // Denuncias
     this.app.use('/denuncias/', denunciasRoutes);
+    // Twitter API
+    this.app.use('/tweets/', twitterApiRoutes);
   }
 }
 
