@@ -21,7 +21,7 @@ class TwitterApiController {
           Authorization: `Bearer ${token}`,
         },
         params: {
-          query: `${query.replace(/,/g, ' OR ')} -is:retweet`,
+          query: `${query.replace(/,/g, ' OR ')} -is:retweet -is:reply`,
           'tweet.fields': 'public_metrics,created_at',
           expansions: 'author_id',
           'user.fields': 'name,username,profile_image_url',
