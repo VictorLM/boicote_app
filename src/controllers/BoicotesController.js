@@ -10,9 +10,9 @@ require('dotenv').config();
 class BoicotesController {
   //
   async index(req, res) {
-    // LIMITE POR PÁGINA (PADRÃO 10)
-    let limite = req.query.limite ? Number(req.query.limite) : 10;
-    limite = Number.isNaN(limite) ? 10 : limite;
+    // LIMITE POR PÁGINA (PADRÃO 5)
+    let limite = req.query.limite ? Number(req.query.limite) : 5;
+    limite = Number.isNaN(limite) ? 5 : limite;
     // PÁGINA PAGINATION (PADRÃO 1)
     let pagina = req.query.pagina ? Number(req.query.pagina) : 1;
     pagina = Number.isNaN(pagina) ? 1 : pagina;
@@ -27,8 +27,8 @@ class BoicotesController {
     try {
       const boicotes = await Boicote.findAll({
         // PAGINATION
-        limit: limite > 10 ? 10 : limite,
-        offset: (pagina - 1) * (limite > 10 ? 10 : limite),
+        limit: limite > 5 ? 5 : limite,
+        offset: (pagina - 1) * (limite > 5 ? 5 : limite),
         //
         where: {
           confirmado: { [Op.ne]: null },

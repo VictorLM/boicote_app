@@ -28,7 +28,7 @@ class ComentariosController {
         attributes: {
           exclude: ['updatedAt', 'deletedAt'],
         },
-        order: [['createdAt', 'DESC']],
+        order: [['createdAt', 'ASC']],
       });
 
       return res.status(200).json(comentarios);
