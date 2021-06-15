@@ -115,7 +115,7 @@ class BoicotesController {
       const mail = {
         from: `"Boicote.App" <${process.env.MAIL_USERNAME}>`,
         to: autor.email,
-        subject: 'Confirmação a criação do seu Boicote criado no Boicote.App',
+        subject: 'Confirme o seu Boicote criado no Boicote.App',
         html,
       };
       nodemailer.sendMail(mail);
