@@ -1,19 +1,19 @@
 <p align="center">
-  <a href="https://boicote.app/">
+  <a href="https://boicote.app/" target="_blank">
     <img src="https://boicote.app/images/logo-red.svg" alt="Boicote.App" />
   </a>
 </p>
 
 <h1 align="center" style="border-bottom: none">
-  <a href="https://boicote.app/">Boicote.App</a>
+  <a href="https://boicote.app/" target="_blank">Boicote.App</a>
   <br/>
   <small>Consumir é um ato político</small>
 </h1>
 
 <h1>Descrição</h1>
 
-<p align="center">
-    O Boicote.App foi desenvolvido com o objetivo de centralizar os boicotes na internet.
+<p>
+    Uma aplicação para você organizar e acompanhar seus boicotes online. Boicote marcas e empresas com seu poder de compra.  Pratique o consumo consciente.
 </p>
 
 <h1 id="tabela-de-conteudo">Tabela de conteúdos</h1>
