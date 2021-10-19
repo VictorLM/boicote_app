@@ -14,7 +14,7 @@
   Esse projeto é o back-end (API). Veja o front-end (UI) <a href="https://github.com/VictorLM/boicote_app_next" target="_blank">aqui.</a>
 </p>
 
-<h1>Descrição</h1>
+<h1 id="descricao">Descrição</h1>
 
 <p>
     Uma aplicação para você organizar e acompanhar seus boicotes online. Boicote marcas e empresas com seu poder de compra.  Pratique o consumo consciente.
@@ -24,6 +24,7 @@
 
 <!--ts-->
    * [Tabela de Conteúdo](#tabela-de-conteudo)
+   * [Descrição](#descricao)
    * [Sobre](#sobre)
    * [Tecnologias](#tecnologias)
    * [Autor](#autor)
